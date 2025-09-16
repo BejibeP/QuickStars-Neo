@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "root": "src",
+      "sourceRoot": "src",
+      "architect": {}
+    }
+  },
+  "defaultProject": "app"
+}
