@@ -1,0 +1,16 @@
+.espace{
+    margin-right: 1em;
+  }
+
+.mat-mdc-raised-button.colored{
+    color: #3F51B5;
+}
+
+.mat-toolbar.property{
+    background-color: green;
+    color: white;
+    position: sticky;
+    position: -webkit-sticky; /* for macOS/iOS Safari*/
+    top: 0; /* set the stiky toolbar on top */
+    z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+}

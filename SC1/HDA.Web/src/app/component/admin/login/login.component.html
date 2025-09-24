@@ -1,0 +1,36 @@
+<div id="login-form-wrap">
+    <br/>
+    <h1>Connexion <span class="colored">administrateur</span></h1>
+    <br/>
+    <form (ngSubmit)="connexion(form)" #form="ngForm">
+        <mat-form-field class="formLogin">
+            <mat-label>Nom d'utilisateur</mat-label>
+            <input matInput
+                type = "text"
+                name = "name"
+                id ="name"
+                [(ngModel)] = "user.name" 
+                required
+            />
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="formLogin">
+            <mat-label>Mot de passe</mat-label>
+            <input matInput
+                [type]="hide ? 'password' : 'text'"
+                name = "password"
+                id = "password"
+                [(ngModel)] = "user.password" 
+                #passwordCtrl = "ngModel"
+                required
+            />
+            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <mat-error *ngIf="passwordCtrl.dirty && passwordCtrl.invalid">Veuillez entrer votre mot de passe</mat-error>
+        </mat-form-field>
+        <div>
+            <button mat-raised-button [disabled]="form.invalid" type="submit" color="primary">
+               Se connecter
+            </button>
+        </div>
+    </form>
+</div>

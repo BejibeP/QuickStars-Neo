@@ -1,0 +1,44 @@
+<h1 mat-dialog-title>Template de mail pour un appel à d'autres joueurs</h1>
+<div mat-dialog-content>
+    <div #toCopy>
+        <p>Bonjour à tous,</p>
+        <p>Il manque <span style="font-weight: bold; color: #3F51B5">seulement {{nbJoueursManquant}} joueurs</span>  pour remplir <span style="font-weight: bold; color: #3F51B5">{{nbTerrain}} terrains.</span></p>
+
+        <table style="border: 2px solid #333; border-collapse: collapse;">
+            <thead style="background-color: #9E9E9E;">
+                <tr>
+                    <th style="border: 2px solid #333; border-collapse: collapse;">Joueur</th>
+                    <th style="border: 2px solid #333; border-collapse: collapse;">Formule</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let joueur of joueursTerrain1">
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #E8EAF6">
+                        {{joueur.nom}} {{joueur.prenom}}
+                    </td>
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #E8EAF6">
+                        {{joueur.formuleRepas}}
+                    </td>
+                </tr>
+                <tr *ngFor="let joueur of joueursTerrain2">
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                        {{joueur.nom}} {{joueur.prenom}}
+                    </td>
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                        {{joueur.formuleRepas}}
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        <p>Si vous souhaitez vous inscrire, entrez votre email sur ce lien : <a href={{currentRoute}}>{{currentRoute}}</a></p>
+        
+        <p> Bonne journée</p>
+        <p>{{this.user}}</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button mat-button (click)="copier()" [ngClass]="[btnStyleCopie]" [disabled]="copie">{{copierContenu()}}</button>
+        <button mat-button (click)="saveMail()" [ngClass]="[btnStyleSave]" [disabled]="save">{{sauvegarder()}}</button>
+      </div>

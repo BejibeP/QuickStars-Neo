@@ -1,0 +1,62 @@
+.material-symbols-outlined {
+    color: rgb(200, 10, 10);
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 300,
+    'GRAD' 200,
+    'opsz' 40,
+}
+
+.coloredBlue{
+    font-weight: bold;
+    color:#3F51B5;
+  }
+  
+::ng-deep .mat-sort-header-container{
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.file-upload{
+    display:none;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.espace{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.mat-expansion-panel
+{
+  background-color:#E8EAF6;
+}
+
+.buttonCenter{
+    text-align: center;
+}
+
+.headerRow {
+    background-color: #3F51B5;
+}
+
+.row:nth-child(2n+1){
+    background-color:#E8EAF6
+}
+
+.row:nth-child(2n){
+    background-color:#FFCFDF;
+}
+
+.buttonsMail{
+    float:right;
+    margin-left: 1em;
+    margin-top: 1em;
+    color: white;
+    background-color: #FF4081;
+  }

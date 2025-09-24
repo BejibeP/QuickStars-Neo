@@ -1,0 +1,141 @@
+<div class="espace">
+    <mat-accordion>
+        <mat-expansion-panel [expanded]="openState === true" (opened)="openState = true" (closed)="openState = false">
+        <mat-expansion-panel-header>
+            <mat-panel-title> Ajouter un membre </mat-panel-title>
+            <mat-panel-description *ngIf="!openState"> Cliquez pour ajouter un nouveau membre </mat-panel-description>
+        </mat-expansion-panel-header>
+        <form (ngSubmit)="save(form)" #form="ngForm">
+            <mat-form-field [style.width.%]="90" appearance="outline">
+                <mat-label for = "nom">Nom</mat-label>
+                <input matInput
+                    type = "text"
+                    class="form-control" 
+                    placeholder="DOE"
+                    id = "nom"
+                    name = "nom"
+                    [(ngModel)] = "membre.nom" 
+                    required
+                />
+            </mat-form-field>
+            <mat-form-field [style.width.%]="90" appearance="outline">
+                <mat-label for = "prenom">Prénom</mat-label>
+                <input matInput
+                    type = "text"
+                    class="form-control" 
+                    placeholder="John"
+                    id = "prenom"
+                    name = "prenom"
+                    [(ngModel)] = "membre.prenom" 
+                    required
+                />
+            </mat-form-field>
+            <mat-form-field [style.width.%]="90" appearance="outline">
+                <mat-label for = "mail">Adresse email</mat-label>
+                <input matInput
+                    type = "text"
+                    placeholder="jd@mail.com"
+                    id = "mail"
+                    name = "mail"
+                    [(ngModel)] = "membre.mail" 
+                    pattern='[a-z0-9._-]+@[a-z]+\.[a-z]{2,3}'
+                    #JoueurMail="ngModel"
+                    required
+                />
+                <mat-error *ngIf="JoueurMail.errors?.['pattern']">Veuillez entrer une adresse mail</mat-error>
+                <mat-error *ngIf="JoueurMail.errors?.['required']">L'adresse mail est requise pour s'inscrire</mat-error>
+            </mat-form-field>
+            <div class="buttonCenter">
+                <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Ajouter ce membre</button>
+            </div>            
+        </form>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <br/>
+    <mat-divider></mat-divider>
+
+    <h3 class="espace"><span class="coloredBlue">{{all}}</span> membres actifs </h3>
+ 
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+        <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef  
+                    mat-sort-header 
+                    class="bg-dark text-white">Nom</th>
+            <td mat-cell *matCellDef="let membre">
+                <span *ngIf="!membre.wantModify">{{membre.nom!}}</span>
+                <mat-form-field *ngIf="membre.wantModify" [style.width.%]="75" appearance="outline">
+                    <input matInput       
+                        type = "text"
+                        name = {{membre.nom}}
+                        class="form-control" 
+                        [(ngModel)] = "membre.nom" 
+                        #libelle = "ngModel"
+                        required
+                    />
+                </mat-form-field>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="prenom">
+            <th mat-header-cell *matHeaderCellDef 
+                    mat-sort-header 
+                    class="bg-dark text-white">Prénom</th>
+            <td mat-cell *matCellDef="let membre">
+                <span *ngIf="!membre.wantModify">{{membre.prenom!}}</span>
+                <mat-form-field *ngIf="membre.wantModify" [style.width.%]="75" appearance="outline">
+                    <input matInput       
+                        type = "text"
+                        name = {{membre.prenom}}
+                        class="form-control" 
+                        [(ngModel)] = "membre.prenom" 
+                        #libelle = "ngModel"
+                        required
+                    />
+                </mat-form-field>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="mail">
+            <th mat-header-cell *matHeaderCellDef  
+                    mat-sort-header 
+                    class="bg-dark text-white">Adresse email</th>
+            <td mat-cell *matCellDef="let membre">
+                <span *ngIf="!membre.wantModify">{{membre.mail!}}</span>
+                <mat-form-field *ngIf="membre.wantModify" [style.width.%]="100" appearance="outline">
+                    <input matInput       
+                        type = "text"
+                        name = {{membre.mail}}
+                        class="form-control" 
+                        [(ngModel)] = "membre.mail" 
+                        #libelle = "ngModel"
+                        required
+                    />
+                </mat-form-field>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="modify" >
+            <th mat-header-cell *matHeaderCellDef  class="bg-dark text-white" [style.width.%]="5"></th>
+            <td mat-cell *matCellDef="let joueur">
+                <button mat-icon-button *ngIf="!joueur.wantModify" (click)="modify(joueur!)"><mat-icon>mode</mat-icon></button>
+                <button mat-icon-button *ngIf="joueur.wantModify" (click)="modify(joueur!)"><mat-icon>save</mat-icon></button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="supprimer" >
+            <th mat-header-cell *matHeaderCellDef  class="bg-dark text-white" [style.width.%]="5"></th>
+            <td mat-cell *matCellDef="let joueur"><button mat-icon-button color="warn" (click)="suppr(joueur.id!)"><mat-icon>delete</mat-icon></button></td>
+        </ng-container>
+
+        <tr mat-header-row class="headerRow" *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row class="row" *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator
+        [pageSize]="50"
+        [pageSizeOptions]="getPageSizeOptions()"
+        aria-label="Select page"
+        showFirstLastButtons>
+    </mat-paginator>
+
+</div>
+

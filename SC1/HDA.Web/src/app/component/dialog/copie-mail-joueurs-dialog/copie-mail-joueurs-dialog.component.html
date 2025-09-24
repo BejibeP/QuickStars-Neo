@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Parmis l'ensemble des joueurs, quelle liste de mail voulez-vous copier ?</h1>
+<div mat-dialog-content>
+    <button mat-raised-button class="buttonsMail" (click)="copieMails('all')">Tout le monde !</button>
+    <button mat-raised-button class="buttonsMail" (click)="copieMails('sopra')">Joueurs SOPRA</button>
+    <button mat-raised-button class="buttonsMail" (click)="copieMails('ext')">Joueurs EXTERNES</button>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Fermer</button>
+</div>

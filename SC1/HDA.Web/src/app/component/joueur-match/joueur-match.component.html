@@ -1,0 +1,149 @@
+<div class="espace">
+
+    <h1> Prochain match : <span class="coloredBlue" *ngIf="matchOuvert">{{matchOuvert.libelle}}</span> ! </h1>
+    
+
+    <div class="espace">
+        <mat-accordion>
+            <mat-expansion-panel [expanded]="openState === true" (opened)="openState = true" (closed)="openState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title *ngIf = "matchOuvert"> Tu veux participer au match ? </mat-panel-title>
+                <mat-panel-description *ngIf="!openState"> Cliquez pour ajouter un nouveau joueur au match </mat-panel-description>
+            </mat-expansion-panel-header>
+            <form (ngSubmit)="save(form)" #form="ngForm">
+                <div>
+                    <mat-form-field [style.width.%]="70" appearance="outline">
+                        <mat-label>Entre ton email</mat-label>
+                        <input matInput
+                            type = "email"
+                            [(ngModel)]="joueur.mail"
+                            placeholder="example@mail.com"
+                            id = "mail"
+                            name = "mail"
+                            class = form-control
+                            #JoueurMail = "ngModel"
+                            pattern='[a-z0-9._-]+@[a-z]+\.[a-z]{2,3}'
+                            required/>
+                        <mat-error *ngIf="JoueurMail.errors?.['pattern']">Veuillez entrer une adresse mail</mat-error>
+                        <mat-error *ngIf="JoueurMail.errors?.['required']">L'adresse mail est requise pour s'inscrire</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="espaceBottom">
+                    <mat-checkbox (click)="wantRepasModify()">Je veux un repas !</mat-checkbox>
+                    <div>
+                        <mat-form-field [style.width.%]="70" *ngIf="wantRepas" appearance="outline">
+                            <mat-label>Choisis ton repas</mat-label>
+                            <mat-select [(ngModel)]="joueur.formuleRepas" 
+                                name="joueur.formuleRepas"
+                                >
+                                <div *ngFor="let repas of repasVue">
+                                    <mat-option value="{{repas.nom}}"> {{repas.nom}} </mat-option>
+                                </div>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="buttonCenter" >
+                    <button mat-raised-button [disabled]="form.invalid" type="submit" color="primary" >
+                        Participer à ce match
+                    </button>
+                </div>  
+                
+            </form>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+<br/>
+<div  *ngIf="isConnected" >
+    <h3 class="ligne"><span class="coloredBlue">Générer un mail</span> de </h3>
+    <button mat-raised-button class="buttonsMail" (click)="mailInvitationDialog()">Proposition de SOCCER</button>
+    <span *ngIf="!checkTerrainComplet()"> <button mat-raised-button class="buttonsMail" (click)="mailManqueJoueursDialog()">Relance SOCCER</button> </span>
+    <button mat-raised-button class="buttonsMail" (click)="mailParticipantsDialog()">Confirmation de SOCCER</button>
+    <br/><br/>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="container" class="espace">
+
+    <div *ngIf = isConnected>
+        <h3 class="ligne"><span class="coloredBlue">Copier la liste</span> des adresses email de</h3>
+        <button mat-raised-button class="buttonsMail" (click)="copieMailsTous()">Tous les joueurs</button>
+        <button mat-raised-button class="buttonsMail" (click)="copieMailsInscrit()">Joueurs inscrits à ce match</button>
+        <br/><br/>
+        <mat-divider></mat-divider>
+    </div>
+
+    <br/>
+
+    <h3><span class="coloredBlue">{{all}}</span> joueurs déjà inscrits pour ce match </h3>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+        <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef  
+                    mat-sort-header 
+                    sortActionDescription="Sort by nom"
+                    class="bg-dark text-white">Nom</th>
+            <td mat-cell *matCellDef="let joueurVue">{{joueurVue.nom!}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="prenom" >
+            <th mat-header-cell *matHeaderCellDef 
+                    mat-sort-header 
+                    class="bg-dark text-white">Prénom</th>
+            <td mat-cell *matCellDef="let joueurVue">{{joueurVue.prenom!}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="heureDeReponse">
+            <th mat-header-cell *matHeaderCellDef  
+                    mat-sort-header 
+                    class="bg-dark text-white">Heure d'ajout</th>
+            <td mat-cell *matCellDef="let joueurVue">{{joueurVue.heureDeReponse! | date: 'à HH:mm, le dd/MM/yy'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="formuleRepas">
+            <th mat-header-cell *matHeaderCellDef  
+                    mat-sort-header 
+                    class="bg-dark text-white">
+                    Formule Repas
+                </th>
+            <td mat-cell *matCellDef="let joueurVue">
+                <button mat-icon-button *ngIf="isConnected" class="btn btn-outline-primary" (click)="askModify(joueurVue)">
+                    <mat-icon>mode</mat-icon>
+                </button>
+                <span *ngIf="!joueurVue.wantModify">{{joueurVue.formuleRepas!}}</span>
+                <span *ngIf="joueurVue.wantModify">
+                    <mat-form-field [style.width.%]="70">
+                        <mat-select [(ngModel)]="joueurVue.formuleRepas" name="joueur.formuleRepas">
+                            <mat-option value="Sans formule">Sans formule</mat-option>
+                            <div *ngFor="let repas of repasVue">
+                                <mat-option value="{{repas.nom}}"> {{repas.nom}} </mat-option>
+                            </div>
+                        </mat-select>
+                    </mat-form-field>
+                </span>
+                
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="buttonDel">
+            <th mat-header-cell *matHeaderCellDef 
+                    class="bg-dark text-white" [style.width.%]="5"></th>
+            <td mat-cell *matCellDef="let joueurVue">
+                <button mat-icon-button color="warn" *ngIf="isConnected" (click)="supprimer(joueurVue.idJoueur!)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row class="headerRow" *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row class="row" *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator
+        [pageSize]="50"
+        [pageSizeOptions]="getPageSizeOptions()"
+        aria-label="Select page">
+    </mat-paginator>
+
+</div>
+

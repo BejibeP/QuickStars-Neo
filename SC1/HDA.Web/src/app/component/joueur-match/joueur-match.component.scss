@@ -1,0 +1,82 @@
+.material-symbols-outlined {
+    color: #ef0078;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 300,
+    'GRAD' 200,
+    'opsz' 40,
+}
+
+td {
+  vertical-align: middle;
+}
+
+::ng-deep .mat-sort-header-container{
+  display: flex;
+  justify-content: center;
+  color: white
+}
+
+.buttonCenter{
+  text-align: center;
+}
+
+.espace{
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.espaceBottom{
+  margin-bottom: 1em;
+}
+
+.coloredBlue{
+  font-weight: bold;
+  color:#3F51B5;
+}
+
+.headerRow {
+  background-color: #3F51B5;
+}
+
+.mat-expansion-panel
+{
+  background-color:	#E8EAF6;
+}
+
+.row:nth-child(20n+1),
+.row:nth-child(20n+2),
+.row:nth-child(20n+3),
+.row:nth-child(20n+4),
+.row:nth-child(20n+5),
+.row:nth-child(20n+6),
+.row:nth-child(20n+7),
+.row:nth-child(20n+8),
+.row:nth-child(20n+9),
+.row:nth-child(20n+10){
+    background-color: #E8EAF6
+}
+
+.row:nth-child(20n+11),
+.row:nth-child(20n+12),
+.row:nth-child(20n+13),
+.row:nth-child(20n+14),
+.row:nth-child(20n+15),
+.row:nth-child(20n+16),
+.row:nth-child(20n+17),
+.row:nth-child(20n+18),
+.row:nth-child(20n+19),
+.row:nth-child(20n+20){
+    background-color:#FFCFDF;
+}
+
+.buttonsMail{
+  margin-left: 1em;
+  color: white;
+  background-color: #FF4081;
+}
+
+.ligne{
+  display: inline;
+  
+}

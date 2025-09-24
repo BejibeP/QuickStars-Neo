@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Template de mail pour le prochain match de SOCCER</h1>
+<div mat-dialog-content>
+    <div #toCopy>
+        <p>Bonjour à tous,</p>
+        <p>Proposition de soccer <span style="font-weight: bold; color: #3F51B5" *ngIf="matchOuvert">{{matchOuvert.libelle}}</span>. <br/>
+        Une réponse est souhaitée avant la veille du match. <br/></p>
+        <p>Les sandwich disponibles sont : </p>
+        <p *ngFor="let repas of repasVue" style="line-height: 5px;">
+            <li>{{repas.nom}}</li>
+        </p>
+        <p>Pour vous inscrire, entrez votre email sur ce lien : <a href={{currentRoute}}>{{currentRoute}}</a></p>
+        <p>P.S : Si vous ne souhaitez plus recevoir de mail de soccer, il suffit de le demander en retour de mail
+        <br/>Bonne journée
+        <br/>{{this.user}}</p>
+    </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-button (click)="copier()" [ngClass]="[btnStyleCopie]" [disabled]="copie">{{copierContenu()}}</button>
+  <button mat-button (click)="saveMail()" [ngClass]="[btnStyleSave]" [disabled]="save">{{sauvegarder()}}</button>
+</div>

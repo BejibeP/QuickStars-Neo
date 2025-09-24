@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Template de mail pour la participation au prochain match de SOCCER</h1>
+<div mat-dialog-content>
+    <div #toCopy>
+        <p>Bonjour à tous,</p>
+        <p>Le Soccer est confirmé pour le match : 
+            <span style="font-weight: bold; color: #3F51B5" *ngIf="matchOuvert">{{matchOuvert.libelle}}</span>
+            <span *ngIf="!deuxTerrain"> avec un seul terrain</span>.</p>
+        <p *ngIf="deuxTerrain">On verra sur place pour la répartition sur les deux terrains. 
+            Par défaut on remplit le 1e terrain, puis le 2e par ordre d'arrivée sauf pour ceux qui souhaitent jouer ensemble.</p>
+        
+        <table style="border: 2px solid #333; border-collapse: collapse;">
+            <thead style="background-color: #9E9E9E;">
+                <tr>
+                    <th style="border: 2px solid #333; border-collapse: collapse;">Joueur</th>
+                    <th style="border: 2px solid #333; border-collapse: collapse;">Formule</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let joueur of joueursTerrain1">
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #E8EAF6">
+                        {{joueur.nom}} {{joueur.prenom}}
+                    </td>
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #E8EAF6">
+                        {{joueur.formuleRepas}}
+                    </td>
+                </tr>
+                <span *ngIf="deuxTerrain">
+                <tr *ngFor="let joueur of joueursTerrain2">
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                        {{joueur.nom}} {{joueur.prenom}}
+                    </td>
+                    <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                        {{joueur.formuleRepas}}
+                    </td>
+
+                </tr>
+                </span>
+            </tbody>
+        </table>
+        <br/>
+        <div *ngIf="!deuxTerrain"> Les joueurs suivants sont sur liste d'attente :
+            <br/>
+            <table style="border: 2px solid #333; border-collapse: collapse;">
+                <thead style="background-color: #9E9E9E;">
+                    <tr>
+                        <th style="border: 2px solid #333; border-collapse: collapse;">Joueur</th>
+                        <th style="border: 2px solid #333; border-collapse: collapse;">Formule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let joueur of joueursTerrain2">
+                        <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                            {{joueur.nom}} {{joueur.prenom}}
+                        </td>
+                        <td style="border: 2px solid #333; border-collapse: collapse; margin: 5px; background-color: #FFCC80">
+                            {{joueur.formuleRepas}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <br/>
+        <p>P.S : Si vous ne souhaitez plus recevoir de mail de soccer, il suffit de le demander en retour de mail</p>
+        <p>Bonne journée</p>
+        <p>{{this.user}}</p>
+    </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-button (click)="copier()" [ngClass]="[btnStyleCopie]" [disabled]="copie">{{copierContenu()}}</button>
+  <button mat-button (click)="saveMail()" [ngClass]="[btnStyleSave]" [disabled]="save">{{sauvegarder()}}</button>
+</div>

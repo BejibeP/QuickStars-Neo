@@ -1,0 +1,14 @@
+<mat-toolbar class="property">
+    <button mat-icon-button routerLink="/home"><mat-icon>energy_savings_leaf</mat-icon></button>
+    <button mat-button routerLink="/create" *ngIf="isWIP">Matchs</button>
+    <button mat-button routerLink="/joueurs" *ngIf="isWIP">Joueurs</button>
+    <button mat-button routerLink="/repas" *ngIf="isWIP">Repas</button>
+    <button mat-button routerLink="/match" *ngIf="isWIP">Prochain match</button>
+    <button mat-button routerLink="/members" *ngIf="isConnected">Membres</button>
+    <button mat-button routerLink="/bookings" *ngIf="isConnected">Reservations</button>
+    <button mat-button routerLink="/calendar">Calendrier</button>
+    <span style="flex: 1 1 auto"></span>
+    <div *ngIf="isConnected" class="espace">Bonjour {{user}} !</div>
+    <button mat-raised-button routerLink="/login" *ngIf="!isConnected" class="colored">Connexion</button>
+    <button mat-raised-button (click)="logout()" *ngIf="isConnected" class="colored">Déconnexion</button>
+</mat-toolbar>

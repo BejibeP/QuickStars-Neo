@@ -1,0 +1,50 @@
+version: '3.9'
+name: "hda"
+
+networks: #instancie le nom du network
+  hdanet:
+    name: hdanet
+
+volumes:
+  hdadata:
+    name: hdadata
+
+services:
+  hdasql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: hdasql
+    ports:
+      - 8002:1433
+    networks:
+      - hdanet
+    volumes:
+      - hdadata:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_SA_PASSWORD=UH\[RzrTLeucJd_/~U5
+      - MSSQL_PID=Express
+    restart: unless-stopped
+
+  hdaapi:
+    image: hdaapi:latest #image à créer
+    container_name: hdaapi
+    ports:
+      - 5209:5209 #le port de l'api dans appsettings ?
+    networks:
+      - hdanet
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ConnectionString=Server=hda-sql,1433;Database=SoccerDB;User Id=SA;Password=UH\[RzrTLeucJd_/~U5;Trusted_Connection=True;
+    depends_on:
+      - hdasql
+    restart: unless-stopped
+
+  # hdaweb:
+  #   image: hdaweb:latest #image à créer
+  #   container_name: hdaweb
+  #   ports: 
+  #     - 4200:6400 #port localhost du web ?
+  #   networks: 
+  #     - hdanet
+  #   depends_on:
+  #     - hdaapi

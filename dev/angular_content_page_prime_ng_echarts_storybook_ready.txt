@@ -1,0 +1,472 @@
+# Projet: Content Page (Angular) — composants réutilisables + Storybook
+
+Ce document contient l'arborescence et les fichiers (TS / HTML / SCSS / Storybook) pour: une page de contenu composée de plusieurs composants réutilisables, utilisant PrimeNG pour la datatable et ngx-echarts / Apache ECharts pour les graphes. Tu peux copier-coller chaque fichier dans ton projet Angular.
+
+---
+
+## Dépendances (installer si pas déjà fait)
+
+```bash
+npm install primeng primeicons @angular/cdk
+npm install ngx-echarts echarts --save
+# pour storybook (si pas déjà installé)
+npx sb init --type angular
+```
+
+Ajoute dans angular.json les styles de PrimeNG (ex. dans "styles"):
+
+```json
+"node_modules/primeicons/primeicons.css",
+"node_modules/primeng/resources/themes/saga-blue/theme.css",
+"node_modules/primeng/resources/primeng.min.css",
+"src/styles.scss"
+```
+
+---
+
+## Modules Angular à importer dans ton `AppModule` (ou un module dédié)
+
+```ts
+// app.module.ts (extrait)
+import { TableModule } from 'primeng/table';
+import { PaginatorModule } from 'primeng/paginator';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { NgxEchartsModule } from 'ngx-echarts';
+
+@NgModule({
+  imports: [
+    FormsModule,
+    TableModule,
+    PaginatorModule,
+    ButtonModule,
+    CardModule,
+    TooltipModule,
+    InputTextModule,
+    NgxEchartsModule.forRoot({ echarts: () => import('echarts') })
+  ]
+})
+export class AppModule {}
+```
+
+---
+
+# Fichiers fournis
+
+Je fournis ci‑dessous les composants suivants (chaque composant a .ts, .html, .scss). Tu peux les coller tels quels.
+
+- `content-page` (page parente qui assemble les composants)
+- `summary-grid` (le bloc en haut: grille 2 colonnes × 4 lignes)
+- `secondary-nav` (barre de navigation secondaire, 4 blocs de redirection)
+- `primeng-table` (page 1: datatable avec filtre et pagination)
+- `split-echarts` (page 2: zone 60% graphe echarts + 40% bloc libre)
+
+---
+
+## src/app/content-page/content-page.component.ts
+```ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-content-page',
+  templateUrl: './content-page.component.html',
+  styleUrls: ['./content-page.component.scss']
+})
+export class ContentPageComponent {
+  // mock: peux être remplacé par inputs ou service
+  summaryItems = [
+    { label: 'Total Users', value: '12,342' },
+    { label: 'Active Today', value: '1,234' },
+    { label: 'New Signups', value: '342' },
+    { label: 'Churn Rate', value: '2.4%' },
+    { label: 'Revenue', value: '€120,230' },
+    { label: 'Avg. Session', value: '00:12:34' },
+    { label: 'Tickets', value: '54' },
+    { label: 'SLA', value: '99.9%' }
+  ];
+
+  navBlocks = [
+    { title: 'Overview', route: '/content/overview', icon: 'pi pi-chart-line' },
+    { title: 'Users', route: '/content/users', icon: 'pi pi-users' },
+    { title: 'Reports', route: '/content/reports', icon: 'pi pi-file' },
+    { title: 'Settings', route: '/content/settings', icon: 'pi pi-cog' }
+  ];
+
+  tableData = Array.from({ length: 78 }).map((_, i) => ({
+    id: i + 1,
+    name: `User ${i + 1}`,
+    email: `user${i + 1}@example.com`,
+    status: i % 3 === 0 ? 'inactive' : 'active'
+  }));
+}
+```
+
+## src/app/content-page/content-page.component.html
+```html
+<section class="content-page">
+  <app-summary-grid [items]="summaryItems"></app-summary-grid>
+
+  <app-secondary-nav [blocks]="navBlocks"></app-secondary-nav>
+
+  <!-- Simule deux pages; passe une route réelle ou un switch pour afficher l'une ou l'autre. -->
+  <div class="page-content">
+    <h2>Page 1 — Data Table</h2>
+    <app-primeng-table [rows]="tableData"></app-primeng-table>
+
+    <hr/>
+
+    <h2>Page 2 — Split (60/40)</h2>
+    <app-split-echarts [chartData]="tableData.slice(0, 10)"></app-split-echarts>
+  </div>
+</section>
+```
+
+## src/app/content-page/content-page.component.scss
+```scss
+.content-page {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: var(--bg, #f7f9fb);
+}
+
+.page-content {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+```
+
+---
+
+## Summary Grid component
+
+### src/app/summary-grid/summary-grid.component.ts
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-summary-grid',
+  templateUrl: './summary-grid.component.html',
+  styleUrls: ['./summary-grid.component.scss']
+})
+export class SummaryGridComponent {
+  @Input() items: Array<{ label: string; value: string }> = [];
+}
+```
+
+### src/app/summary-grid/summary-grid.component.html
+```html
+<div class="summary-grid">
+  <div class="card" *ngFor="let it of items; index as i">
+    <div class="label">{{ it.label }}</div>
+    <div class="value">{{ it.value }}</div>
+  </div>
+</div>
+```
+
+### src/app/summary-grid/summary-grid.component.scss
+```scss
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.card {
+  background: white;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64px;
+  box-shadow: 0 6px 14px rgba(12, 15, 20, 0.04);
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+```
+
+---
+
+## Secondary Nav component (4 blocs)
+
+### src/app/secondary-nav/secondary-nav.component.ts
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-secondary-nav',
+  templateUrl: './secondary-nav.component.html',
+  styleUrls: ['./secondary-nav.component.scss']
+})
+export class SecondaryNavComponent {
+  @Input() blocks: Array<{ title: string; route?: string; icon?: string }> = [];
+}
+```
+
+### src/app/secondary-nav/secondary-nav.component.html
+```html
+<nav class="secondary-nav">
+  <a *ngFor="let b of blocks" class="nav-block" [routerLink]="b.route || '#'">
+    <i class="icon" [ngClass]="b.icon"></i>
+    <span class="title">{{ b.title }}</span>
+  </a>
+</nav>
+```
+
+### src/app/secondary-nav/secondary-nav.component.scss
+```scss
+.secondary-nav {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.nav-block {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(180deg,#fff,#fbfdff);
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 3px 10px rgba(13, 20, 40, 0.03);
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+
+.nav-block:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(10, 20, 40, 0.06); }
+.icon { font-size: 1.25rem; }
+.title { font-weight: 600; }
+```
+
+---
+
+## Primeng Table component (Page 1)
+
+### src/app/primeng-table/primeng-table.component.ts
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-primeng-table',
+  templateUrl: './primeng-table.component.html',
+  styleUrls: ['./primeng-table.component.scss']
+})
+export class PrimengTableComponent {
+  @Input() rows: Array<any> = [];
+  // p-table built-in pagination uses lazy or paginator props; here client-side simple example
+  globalFilter = '';
+}
+```
+
+### src/app/primeng-table/primeng-table.component.html
+```html
+<div class="table-wrapper">
+  <div class="table-header">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" placeholder="Rechercher..." [(ngModel)]="globalFilter" />
+    </span>
+  </div>
+
+  <p-table [value]="rows" [paginator]="true" [rows]="10" [globalFilterFields]="['name','email','status']" [rowsPerPageOptions]="[5,10,20]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Status</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.id }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.email }}</td>
+        <td>
+          <span [class]="row.status === 'active' ? 'status active' : 'status inactive'">{{ row.status }}</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+```
+
+### src/app/primeng-table/primeng-table.component.scss
+```scss
+.table-wrapper { padding: 0.5rem 0; }
+
+.table-header { display: flex; justify-content: flex-end; margin-bottom: .5rem; }
+
+.status { padding: 0.2rem .5rem; border-radius: 12px; font-weight: 600; font-size: .8rem; }
+.status.active { background: #def7ec; color: #065f46; }
+.status.inactive { background: #ffefef; color: #9b1c1c; }
+```
+
+Notes: p-table utilise la recherche globale via `globalFilterFields`. Le champ `[(ngModel)]="globalFilter"` est pour l'UI — pour connecter le filtre à p-table sans lazy-loading, tu peux utiliser la propriété `globalFilterFields` et l'input `p-table`-level event, sinon implémenter `filterGlobal` via `p-table`'s API.
+
+---
+
+## Split ECharts component (Page 2)
+
+### src/app/split-echarts/split-echarts.component.ts
+```ts
+import { Component, Input, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-split-echarts',
+  templateUrl: './split-echarts.component.html',
+  styleUrls: ['./split-echarts.component.scss']
+})
+export class SplitEchartsComponent implements OnInit {
+  @Input() chartData: any[] = [];
+
+  chartOptions: any;
+
+  ngOnInit(): void {
+    const categories = this.chartData.map(d => d.name);
+    const values = this.chartData.map((d, i) => Math.round(Math.random() * 100));
+
+    this.chartOptions = {
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: categories },
+      yAxis: { type: 'value' },
+      series: [
+        { data: values, type: 'line', smooth: true }
+      ]
+    };
+  }
+}
+```
+
+### src/app/split-echarts/split-echarts.component.html
+```html
+<div class="split">
+  <div class="left">
+    <div class="chart-card">
+      <div echarts [options]="chartOptions" class="echart"></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="panel">
+      <h3>Bloc libre</h3>
+      <p>Tu peux y mettre texte, image, tableau ou autre. Exemple rapide:</p>
+      <ul>
+        <li>Résumé</li>
+        <li>KPIs</li>
+        <li>Actions</li>
+      </ul>
+    </div>
+  </div>
+</div>
+```
+
+### src/app/split-echarts/split-echarts.component.scss
+```scss
+.split { display: flex; gap: 1rem; }
+.left { flex: 0 0 60%; }
+.right { flex: 1; }
+
+.chart-card { background: white; padding: 0.5rem; border-radius: 8px; height: 320px; }
+.echart { width: 100%; height: 100%; }
+
+.panel { background: white; padding: 1rem; border-radius: 8px; height: 320px; overflow: auto; }
+```
+
+---
+
+## Storybook: exemples de stories (Angular)
+
+J'inclus un exemple générique pour `SummaryGrid` et `PrimengTable`. Les stories Angular utilisent `@storybook/angular`.
+
+### .storybook/main.js (extrait si besoin)
+```js
+module.exports = {
+  stories: ['../src/**/*.stories.ts'],
+  addons: ['@storybook/addon-essentials']
+}
+```
+
+### src/app/summary-grid/summary-grid.stories.ts
+```ts
+import { Meta, Story } from '@storybook/angular';
+import { SummaryGridComponent } from './summary-grid.component';
+
+export default {
+  title: 'Content/SummaryGrid',
+  component: SummaryGridComponent,
+} as Meta;
+
+const Template: Story<SummaryGridComponent> = (args: SummaryGridComponent) => ({ props: args });
+
+export const Default = Template.bind({});
+Default.args = {
+  items: [
+    { label: 'Total Users', value: '12,342' },
+    { label: 'Active', value: '1,234' },
+    { label: 'New', value: '342' },
+    { label: 'Revenue', value: '€120k' }
+  ]
+};
+```
+
+### src/app/primeng-table/primeng-table.stories.ts
+```ts
+import { moduleMetadata, Meta, Story } from '@storybook/angular';
+import { PrimengTableComponent } from './primeng-table.component';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+
+export default {
+  title: 'Content/PrimengTable',
+  component: PrimengTableComponent,
+  decorators: [
+    moduleMetadata({
+      imports: [TableModule, InputTextModule, FormsModule]
+    })
+  ]
+} as Meta;
+
+const Template: Story<PrimengTableComponent> = (args: PrimengTableComponent) => ({ props: args });
+
+export const Default = Template.bind({});
+Default.args = {
+  rows: Array.from({ length: 12 }).map((_, i) => ({ id: i+1, name: `User ${i+1}`, email: `u${i+1}@x.com`, status: i%2? 'active': 'inactive' }))
+};
+```
+
+---
+
+## Conseils d'intégration / bonnes pratiques
+
+- Découpe les composants dans un module `ContentModule` et exporte-les pour Storybook.
+- Fais des composants `@Input()`-driven (comme ci-dessus) pour favoriser la réutilisabilité et le test via Storybook.
+- Pour ECharts, utilise `ngx-echarts` et évite d'importer ECharts globalement si tu veux du lazy-loading.
+- Pour la table, si tu dois gérer des milliers de lignes, active le `virtualScroll` ou passe en lazy loading côté serveur.
+- Ajoute des `aria-*` et tests d'accessibilité pour les blocs navigables.
+
+---
+
+### Remarque
+J'ai fourni une base complète et prête à l'emploi. Si tu veux que je génère aussi les fichiers `.spec.ts`, ou que je les transforme en composants `standalone` (Angular 14+), dis‑le et je m'en occupe.
+
+Bonne intégration — veux-tu que j'ajoute les versions TypeScript complètes des modules/fichiers `index.ts` et `ContentModule` ?
